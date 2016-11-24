@@ -1,0 +1,12 @@
+I have a device that is continuously putting out PCM data. 
+Under certain circumstances I want to record this output. 
+To this end I have a process that waits for the signal to record and when it gets it, 
+it starts a thread (via pthread_create). 
+This thread opens the PCM device and starts recording using snd_async_add_pcm_handler. 
+This handler fn uses pcm_readi to get any available info in the PCM stream and write it to disk.
+
+What you should do is to have an event loop (using poll) in your thread 
+that handles both the PCM device and the exit message from the main thread. 
+For this, the PCM device should be run in non-blocking mode (using the snd_pcm_poll_descriptors* functions). 
+To send a message to the thread, use any mechanism with a pollable file handle, such as a pipe or eventfd.
+
