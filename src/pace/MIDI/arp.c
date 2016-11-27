@@ -170,7 +170,8 @@ void parse_sequence() {
   if(fscanf(f,"%04d %02d %04d %02d ", &dur_integer, &num, &den, &oct_ref)<0)
   	printf("Problem with reading the file.\n");
   seq_len = 0;
-  while((c = fgetc(f))!=EOF) {
+  c = fgetc(f);
+  while(!feof(f)) {
   	oct = oct_ref;
   	while(c=='-'){
   		oct--;
@@ -246,6 +247,7 @@ void parse_sequence() {
   	sequence[3][seq_len] = instr;
   	
    	seq_len++;
+   	c = fgetc(f);
   	}
   fclose(f);
   float decimal = den == 0 ? 0.0f : (float) num / (float) den;
