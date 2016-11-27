@@ -88,7 +88,7 @@ asTypeOf
 	compare
 concat
 concatMap
-	const
+const
 	cos
 	cosh
 	curry
