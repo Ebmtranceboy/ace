@@ -310,7 +310,7 @@ void synth(char* hw, int keyboard){
     // working directory.
     pm = PluginManager_new();
     dstring dirname = dstring_new("src/pace/MIDI/plugin");
-    pdstate = discover_plugins(dirname, pm);  
+    pdstate = discover_plugins(dirname, pm, rate);  
     dstring_free(dirname);
 
     for (l1 = 0; l1 < POLY; note_active[l1++] = 0);

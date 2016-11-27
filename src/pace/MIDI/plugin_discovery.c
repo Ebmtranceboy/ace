@@ -32,7 +32,7 @@ typedef struct PluginDiscoveryState_t {
 // must export as init_<pluginname>. This function accepts a pointer to a plugin
 // manager. Its return value means an error if < 0, success otherwise.
 //
-typedef int (*PluginInitFunc)(PluginManager*);
+typedef int (*PluginInitFunc)(PluginManager*, int); // sr
 
 
 // Given a filename, return the name of the plugin (the filename
@@ -64,7 +64,7 @@ static dstring get_plugin_name(char* filename) {
 // NULL is returned.
 //
 
-static void* load_plugin(dstring name, dstring fullpath, PluginManager* pm) {
+static void* load_plugin(dstring name, dstring fullpath, PluginManager* pm, int sr) {
     // Make sure the path to dlopen has a slash, for it to consider it 
     // an actual filesystem path and not just a lookup name.
     dstring slashedpath = dstring_format("./%s", dstring_cstr(fullpath));
@@ -92,7 +92,7 @@ static void* load_plugin(dstring name, dstring fullpath, PluginManager* pm) {
         return NULL;
     }
 
-    int rc = initfunc(pm);
+    int rc = initfunc(pm,sr);
     if (rc < 0) {
         printf("Error: Plugin init function returned %d\n", rc);
         dlclose(libhandle);
@@ -104,7 +104,7 @@ static void* load_plugin(dstring name, dstring fullpath, PluginManager* pm) {
 }
 
 
-void* discover_plugins(dstring dirname, PluginManager* pm) {
+void* discover_plugins(dstring dirname, PluginManager* pm, int sr) {
     const char* dirname_s = dstring_cstr(dirname);
     DIR* dir = opendir(dirname_s);
     if (!dir) {
@@ -127,7 +127,7 @@ void* discover_plugins(dstring dirname, PluginManager* pm) {
         dstring fullpath = dstring_format("%s/%s",
                                           dirname_s, direntry->d_name);
         // Load the plugin, get the DSO handle and add it to the list
-        void* handle = load_plugin(name, fullpath, pm);
+        void* handle = load_plugin(name, fullpath, pm, sr);
         if (handle) {
             PluginHandleList* handle_node = mem_alloc(sizeof(*handle_node));
             handle_node->handle = handle;

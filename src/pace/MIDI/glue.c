@@ -12,13 +12,13 @@ static void tt_role_hook(Post* post) {
 }
 
 
-int init_tt(PluginManager* pm) {
+int init_tt(PluginManager* pm, int rate) {
     dstring rolename = dstring_new("tt");
     PluginManager_register_role_hook(pm, rolename, tt_role_hook);
     dstring_free(rolename);
     
     instr = newmydsp();
-    initmydsp(instr,44100);
+    initmydsp(instr, rate);
     return 1;
 }
 
